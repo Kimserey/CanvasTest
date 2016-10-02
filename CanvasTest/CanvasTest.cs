@@ -31,30 +31,112 @@ namespace CanvasTest
 			get { return (double)GetValue(SelectionHeightProperty); }
 			set { SetValue(SelectionHeightProperty, value); }
 		}
+
+		public static readonly BindableProperty SelectionXProperty =
+			BindableProperty.Create(
+				propertyName: "SelectionX",
+			  	returnType: typeof(double),
+			  	declaringType: typeof(TestView),
+			  	defaultValue: 0.5);
+
+		public double SelectionX
+		{
+			get { return (double)GetValue(SelectionXProperty); }
+			set { SetValue(SelectionXProperty, value); }
+		}
+
+		public static readonly BindableProperty SelectionYProperty =
+			BindableProperty.Create(
+				propertyName: "SelectionY",
+			  	returnType: typeof(double),
+			  	declaringType: typeof(TestView),
+			  	defaultValue: 0.5);
+
+		public double SelectionY
+		{
+			get { return (double)GetValue(SelectionYProperty); }
+			set { SetValue(SelectionYProperty, value); }
+		}
 	}
 
-	public class App : Application
+	public class CustomSlider : AbsoluteLayout
 	{
-		public App()
+		Slider slider =
+			new Slider
+			{
+				Margin = 0,
+				HeightRequest = 50,
+				Value = 0.5,
+				VerticalOptions = LayoutOptions.Center
+			};
+
+		EventHandler<ValueChangedEventArgs> handler = null;
+
+		public CustomSlider(string text, Action<double> onValueChanged)
+		{
+			handler = (sender, e) =>
+			{
+				onValueChanged(e.NewValue);
+			};
+
+			var label =
+				new Label
+				{
+					Text = text,
+					VerticalTextAlignment = TextAlignment.Center,
+					HorizontalTextAlignment = TextAlignment.Center
+				};
+
+			slider.ValueChanged += handler;
+			this.Children.Add(label, new Rectangle(0, 0, 0.1, 1), AbsoluteLayoutFlags.All);
+			this.Children.Add(slider, new Rectangle(1, 0, 0.9, 1), AbsoluteLayoutFlags.All);
+		}
+
+		~CustomSlider()
+		{
+			slider.ValueChanged -= handler;
+			handler = null;
+		}
+	}
+
+	public class CropPage : ContentPage
+	{
+		public CropPage()
 		{
 			var layout = new AbsoluteLayout();
 			var view = new TestView();
 
+			var xSlider =
+				new CustomSlider(
+					"X",
+					value =>
+					{
+						view.SelectionX = value;
+					});
+
+			var ySlider =
+				new CustomSlider(
+					"Y",
+					value =>
+					{
+						view.SelectionY = value;
+					});
+
 			var widthSlider =
-				new Slider
-				{
-					HeightRequest = 50,
-					Value = 0.5,
-					VerticalOptions = LayoutOptions.Center
-				};
+				new CustomSlider(
+					"W",
+					value =>
+					{
+						view.SelectionWidth = value;
+					});
 
 			var heightSlider =
-				new Slider
-				{
-					HeightRequest = 50,
-					Value = 0.5,
-					VerticalOptions = LayoutOptions.Center
-				};
+				new CustomSlider(
+					"H",
+					value =>
+					{
+						view.SelectionHeight = value;
+					});
 
 			var button =
 				new Button
@@ -62,38 +144,59 @@ namespace CanvasTest
 					Text = "Crop image"
 				};
 
+			button.Clicked += (sender, e) =>
+			{
+				var croppedImagePath =
+					DependencyService.Get<ICropService>().Crop(
+						new CropOption
+						{
+							X = view.SelectionX,
+							Y = view.SelectionY,
+							Width = view.SelectionWidth,
+							Height = view.SelectionHeight
+						});
+
+				this.Navigation.PushAsync(new PreviewPage(croppedImagePath));
+			};
+
 			var sliders =
 				new StackLayout
 				{
 					Spacing = 0,
 					Children = {
+						xSlider,
+						ySlider,
 						widthSlider,
 						heightSlider,
 						button
 					}
 				};
 
-			widthSlider.ValueChanged += (sender, e) =>
-			{
-				view.SelectionWidth = e.NewValue;
-			};
-
-			heightSlider.ValueChanged += (sender, e) =>
-			{
-				view.SelectionHeight = e.NewValue;
-			};
-
 			layout.Children.Add(view, new Rectangle(0, 0, 1, .7), AbsoluteLayoutFlags.All);
 			layout.Children.Add(sliders, new Rectangle(0, 1, 1, .3), AbsoluteLayoutFlags.All);
 
-			var content =
-				new ContentPage
-				{
-					Title = "Canvas test",
-					Content = layout
-				};
+			this.Title = "Crop test";
+			this.Content = layout;
+		}
+	}
 
-			MainPage = new NavigationPage(content);
+	public class PreviewPage : ContentPage
+	{
+		public PreviewPage(string imagePath)
+		{
+			this.Content =
+				new Image
+				{
+					Source = ImageSource.FromFile(imagePath)
+				};
+		}
+	}
+
+	public class App : Application
+	{
+		public App()
+		{
+			MainPage = new NavigationPage(new CropPage());
 		}
 	}
 }

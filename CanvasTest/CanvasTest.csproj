@@ -30,6 +30,7 @@
   <ItemGroup>
     <Compile Include="CanvasTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ICropService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">

@@ -13,6 +13,7 @@ using CanvasTest.Droid;
 [assembly: ExportRenderer(typeof(TestView), typeof(TestViewRenderer))]
 namespace CanvasTest
 {
+
 	[Preserve(AllMembers = true)]
 	public class TestViewRenderer: ImageRenderer
 	{
@@ -21,7 +22,9 @@ namespace CanvasTest
 			base.OnElementPropertyChanged(sender, e);
 
 			if (e.PropertyName == TestView.SelectionWidthProperty.PropertyName
-			    || e.PropertyName == TestView.SelectionHeightProperty.PropertyName)
+			    || e.PropertyName == TestView.SelectionHeightProperty.PropertyName
+			    || e.PropertyName == TestView.SelectionXProperty.PropertyName
+			    || e.PropertyName == TestView.SelectionYProperty.PropertyName)
 			{
 				this.Invalidate();
 			}
@@ -31,16 +34,18 @@ namespace CanvasTest
 		{
 			var selectionWidth = ((TestView)this.Element).SelectionWidth * this.Width;
 			var selectionHeight = ((TestView)this.Element).SelectionHeight * this.Height;
+			var selectionX = ((TestView)this.Element).SelectionX * this.Width;
+			var selectionY = ((TestView)this.Element).SelectionY * this.Height;
 
 			var bitmap = BitmapFactory.DecodeResource(this.Context.Resources, Droid.Resource.Drawable.icon);
 
 			var path = new Path();
 			path.AddRect(
 				new RectF(
-					Convert.ToSingle((this.Width / 2.0) - (selectionWidth / 2.0)), 
-					Convert.ToSingle((this.Height / 2.0) - (selectionHeight / 2.0)),
-					Convert.ToSingle((this.Width / 2.0) + (selectionWidth / 2.0)),
-					Convert.ToSingle((this.Height / 2.0) + (selectionHeight / 2.0))), 
+					Convert.ToSingle(selectionX - (selectionWidth / 2.0)), 
+					Convert.ToSingle(selectionY - (selectionHeight / 2.0)),
+					Convert.ToSingle(selectionX + (selectionWidth / 2.0)),
+					Convert.ToSingle(selectionY + (selectionHeight / 2.0))), 
 				Path.Direction.Ccw);
 
 			var paint = new Paint();
