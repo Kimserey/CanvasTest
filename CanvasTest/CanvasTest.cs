@@ -6,6 +6,18 @@ namespace CanvasTest
 {
 	public class TestView : Image
 	{
+		public static readonly BindableProperty SourcePathProperty =
+			BindableProperty.Create(
+				propertyName: "SourcePath",
+			  	returnType: typeof(string),
+			  	declaringType: typeof(TestView));
+
+		public string SourcePath
+		{
+			get { return (string)GetValue(SourcePathProperty); }
+			set { SetValue(SourcePathProperty, value); }
+		}
+
 		public static readonly BindableProperty SelectionWidthProperty =
 			BindableProperty.Create(
 				propertyName: "SelectionWidth",
@@ -104,7 +116,7 @@ namespace CanvasTest
 		public CropPage()
 		{
 			var layout = new AbsoluteLayout();
-			var view = new TestView();
+			var view = new TestView { SourcePath = "camera_test/IMG_20161002_041856316.jpg" };
 
 			var xSlider =
 				new CustomSlider(
@@ -148,6 +160,7 @@ namespace CanvasTest
 			{
 				var croppedImagePath =
 					DependencyService.Get<ICropService>().Crop(
+						view.SourcePath,
 						new CropOption
 						{
 							X = view.SelectionX,

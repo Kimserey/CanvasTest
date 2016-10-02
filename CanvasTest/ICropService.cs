@@ -31,6 +31,6 @@ namespace CanvasTest
 	
 	public interface ICropService
 	{
-		string Crop(CropOption options);
+		string Crop(string imagePath, CropOption options);
 	}
 }
