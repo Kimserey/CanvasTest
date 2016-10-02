@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasTest", "CanvasTest\CanvasTest.csproj", "{9203C18B-9F99-4A29-9746-C33857B7E1D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasTest.Droid", "Droid\CanvasTest.Droid.csproj", "{A12EC3A1-6233-4230-8AAF-814536E72310}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8BD28CBE-85D9-4FF8-9D2C-BEED177EAD73}"
+	ProjectSection(SolutionItems) = preProject
+		CanvasTest.sln = CanvasTest.sln
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9203C18B-9F99-4A29-9746-C33857B7E1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9203C18B-9F99-4A29-9746-C33857B7E1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9203C18B-9F99-4A29-9746-C33857B7E1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9203C18B-9F99-4A29-9746-C33857B7E1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A12EC3A1-6233-4230-8AAF-814536E72310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12EC3A1-6233-4230-8AAF-814536E72310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12EC3A1-6233-4230-8AAF-814536E72310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12EC3A1-6233-4230-8AAF-814536E72310}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
