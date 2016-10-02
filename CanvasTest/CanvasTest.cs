@@ -8,27 +8,27 @@ namespace CanvasTest
 	{
 		public static readonly BindableProperty SelectionWidthProperty =
 			BindableProperty.Create(
-				propertyName: nameof(SelectionWidth),
-			  	returnType: typeof(int),
+				propertyName: "SelectionWidth",
+			  	returnType: typeof(double),
 			  	declaringType: typeof(TestView),
-			  	defaultValue: 0);
+			  	defaultValue: 0.5);
 
-		public int SelectionWidth
+		public double SelectionWidth
 		{
-			get { return (int)GetValue(SelectionWidthProperty); }
+			get { return (double)GetValue(SelectionWidthProperty); }
 			set { SetValue(SelectionWidthProperty, value); }
 		}
 
 		public static readonly BindableProperty SelectionHeightProperty =
 			BindableProperty.Create(
-				propertyName: nameof(SelectionHeight),
-			  	returnType: typeof(int),
+				propertyName: "SelectionHeight",
+			  	returnType: typeof(double),
 			  	declaringType: typeof(TestView),
-			  	defaultValue: 0);
+			  	defaultValue: 0.5);
 
-		public int SelectionHeight
+		public double SelectionHeight
 		{
-			get { return (int)GetValue(SelectionHeightProperty); }
+			get { return (double)GetValue(SelectionHeightProperty); }
 			set { SetValue(SelectionHeightProperty, value); }
 		}
 	}
@@ -38,28 +38,53 @@ namespace CanvasTest
 		public App()
 		{
 			var layout = new AbsoluteLayout();
-			var view = new TestView { HeightRequest = 100, WidthRequest = 100 };
-			var widthSlider = new Slider();
-			var heightSlider = new Slider();
+			var view = new TestView();
 
-			var sliders = new StackLayout
+			var widthSlider =
+				new Slider
+				{
+					HeightRequest = 50,
+					Value = 0.5,
+					VerticalOptions = LayoutOptions.Center
+				};
+
+			var heightSlider =
+				new Slider
+				{
+					HeightRequest = 50,
+					Value = 0.5,
+					VerticalOptions = LayoutOptions.Center
+				};
+
+			var button =
+				new Button
+				{
+					Text = "Crop image"
+				};
+
+			var sliders =
+				new StackLayout
+				{
+					Spacing = 0,
+					Children = {
+						widthSlider,
+						heightSlider,
+						button
+					}
+				};
+
+			widthSlider.ValueChanged += (sender, e) =>
 			{
-				Spacing = 0,
-				Children = {
-					widthSlider,
-					heightSlider
-				}
+				view.SelectionWidth = e.NewValue;
 			};
 
-			widthSlider.ValueChanged += (sender, e) => {
-				view.SelectionWidth = (int)e.NewValue;
-			};
-			heightSlider.ValueChanged += (sender, e) => { 
-				view.SelectionHeight = (int)e.NewValue;
+			heightSlider.ValueChanged += (sender, e) =>
+			{
+				view.SelectionHeight = e.NewValue;
 			};
 
-			layout.Children.Add(view, new Rectangle(0, 0, 1, .8), AbsoluteLayoutFlags.All);
-			layout.Children.Add(sliders, new Rectangle(0, 1, 1, .2), AbsoluteLayoutFlags.All);
+			layout.Children.Add(view, new Rectangle(0, 0, 1, .7), AbsoluteLayoutFlags.All);
+			layout.Children.Add(sliders, new Rectangle(0, 1, 1, .3), AbsoluteLayoutFlags.All);
 
 			var content =
 				new ContentPage

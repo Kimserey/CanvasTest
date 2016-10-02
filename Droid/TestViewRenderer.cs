@@ -29,18 +29,18 @@ namespace CanvasTest
 
 		protected override bool DrawChild(Canvas canvas, Android.Views.View child, long drawingTime)
 		{
-			var selectionWidth = ((TestView)this.Element).SelectionWidth;
-			var selectionHeight = ((TestView)this.Element).SelectionHeight;
+			var selectionWidth = ((TestView)this.Element).SelectionWidth * this.Width;
+			var selectionHeight = ((TestView)this.Element).SelectionHeight * this.Height;
 
 			var bitmap = BitmapFactory.DecodeResource(this.Context.Resources, Droid.Resource.Drawable.icon);
 
 			var path = new Path();
 			path.AddRect(
 				new RectF(
-					(this.Width / 2) - (selectionWidth / 2), 
-					(this.Height / 2) - (selectionHeight / 2),
-					(this.Width / 2) + (selectionWidth / 2),
-					(this.Height / 2) + (selectionHeight / 2)), 
+					Convert.ToSingle((this.Width / 2.0) - (selectionWidth / 2.0)), 
+					Convert.ToSingle((this.Height / 2.0) - (selectionHeight / 2.0)),
+					Convert.ToSingle((this.Width / 2.0) + (selectionWidth / 2.0)),
+					Convert.ToSingle((this.Height / 2.0) + (selectionHeight / 2.0))), 
 				Path.Direction.Ccw);
 
 			var paint = new Paint();
