@@ -33,4 +33,9 @@ namespace CanvasTest
 	{
 		string Crop(string imagePath, CropOption options);
 	}
+
+	public interface IPath
+	{
+		string GetPublicDirectory();
+	}
 }

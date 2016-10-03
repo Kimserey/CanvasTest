@@ -11,16 +11,39 @@ using Android.Content;
 using Android.Graphics.Drawables.Shapes;
 using CanvasTest.Droid;
 using Android.OS;
+using Java.IO;
 
 [assembly: ExportRenderer(typeof(TestView), typeof(TestViewRenderer))]
+[assembly: Dependency(typeof(CropService))]
+[assembly: Dependency(typeof(CanvasTest.Path))]
 namespace CanvasTest
 {
+	public class Path : IPath
+	{
+		public string GetPublicDirectory()
+		{
+			return Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).Path;
+		}
+	}
 
 	public class CropService : ICropService
 	{
 		public string Crop(string imagePath, CropOption options)
 		{
-			throw new NotImplementedException();
+			var sourcePath = System.IO.Path.Combine(DependencyService.Get<IPath>().GetPublicDirectory(), imagePath);
+			var original = BitmapFactory.DecodeFile(sourcePath);
+			var resized = Bitmap.CreateBitmap(original, (int)(options.X * original.Width), (int)(options.Y * original.Height), (int)(options.Width * original.Width), (int)(options.Height * original.Height));
+
+			var destinationPath = System.IO.Path.Combine(DependencyService.Get<IPath>().GetPublicDirectory(), "crop_test.jpg");
+			using (var file = System.IO.File.Create(destinationPath))
+			{
+				resized.Compress(Bitmap.CompressFormat.Jpeg, 100, file);
+			}
+
+			original.Dispose();
+			resized.Dispose();
+
+			return destinationPath;
 		}
 	}
 
@@ -59,8 +82,8 @@ namespace CanvasTest
 			var path = new Android.Graphics.Path();
 			path.AddRect(
 				new RectF(
-					Convert.ToSingle(selectionX - (selectionWidth / 2.0)), 
-					Convert.ToSingle(selectionY - (selectionHeight / 2.0)),
+					Convert.ToSingle(selectionX), 
+					Convert.ToSingle(selectionY),
 					Convert.ToSingle(selectionX + (selectionWidth / 2.0)),
 					Convert.ToSingle(selectionY + (selectionHeight / 2.0))),
 				Android.Graphics.Path.Direction.Ccw);
@@ -75,6 +98,7 @@ namespace CanvasTest
 			
 			path.Dispose();
 			paint.Dispose();
+			bitmap.Dispose();
 
 			return base.DrawChild(canvas, child, drawingTime);
 		}
