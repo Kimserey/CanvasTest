@@ -70,22 +70,22 @@ namespace CanvasTest
 
 			if(string.IsNullOrWhiteSpace(sourcePath))
 				return base.DrawChild(canvas, child, drawingTime);
-			
-			var selectionWidth = ((TestView)this.Element).SelectionWidth * this.Width;
-			var selectionHeight = ((TestView)this.Element).SelectionHeight * this.Height;
-			var selectionX = ((TestView)this.Element).SelectionX * this.Width;
-			var selectionY = ((TestView)this.Element).SelectionY * this.Height;
 
 			sourcePath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).Path, sourcePath);
 			var bitmap = BitmapFactory.DecodeFile(sourcePath);
+
+			var selectionWidth = ((TestView)this.Element).SelectionWidth * bitmap.Width;
+			var selectionHeight = ((TestView)this.Element).SelectionHeight * bitmap.Height;
+			var selectionX = ((TestView)this.Element).SelectionX * bitmap.Width;
+			var selectionY = ((TestView)this.Element).SelectionY * bitmap.Height;
 
 			var path = new Android.Graphics.Path();
 			path.AddRect(
 				new RectF(
 					Convert.ToSingle(selectionX), 
 					Convert.ToSingle(selectionY),
-					Convert.ToSingle(selectionX + (selectionWidth / 2.0)),
-					Convert.ToSingle(selectionY + (selectionHeight / 2.0))),
+					Convert.ToSingle(selectionX + selectionWidth),
+					Convert.ToSingle(selectionY + selectionHeight)),
 				Android.Graphics.Path.Direction.Ccw);
 
 			var paint = new Paint();
@@ -93,7 +93,7 @@ namespace CanvasTest
 			paint.SetStyle(Paint.Style.Stroke);
 			paint.Color = Android.Graphics.Color.Blue;
 
-			canvas.DrawBitmap(bitmap, null, new Rect(0, 0, this.Width, this.Height), paint);
+			canvas.DrawBitmap(bitmap, null, new Rect(0, 0, bitmap.Width, bitmap.Height), paint);
 			canvas.DrawPath(path, paint);
 			
 			path.Dispose();

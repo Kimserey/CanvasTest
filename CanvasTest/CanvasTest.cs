@@ -197,6 +197,7 @@ namespace CanvasTest
 	{
 		public PreviewPage(string imagePath)
 		{
+			this.Title = "Cropped preview";
 			this.Content =
 				new Image
 				{
