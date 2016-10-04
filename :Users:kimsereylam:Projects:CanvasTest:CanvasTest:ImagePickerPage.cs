@@ -27,10 +27,8 @@ namespace CanvasTest
 					VerticalOptions = LayoutOptions.Center
 				};
 
-			button.Clicked += async (sender, e) =>
+			button.Clicked +=  (sender, e) =>
 			{
-				var imagePath = await DependencyService.Get<IImagePicker>().Pick();
-				image.Source = ImageSource.FromFile(imagePath);
 			};
 
 			layout.Children.Add(image, new Rectangle(0, 0, 1, .7), AbsoluteLayoutFlags.All);

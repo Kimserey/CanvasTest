@@ -101,88 +101,101 @@ namespace CanvasTest
 
 	public class CropPage : ContentPage
 	{
-		public CropPage(string image)
+		string imagePath;
+
+		public CropPage()
 		{
 			var layout = new AbsoluteLayout();
 			var view =
 				new CropView
 				{
-					Source = ImageSource.FromFile(image),
 					Aspect = Aspect.AspectFit
 				};
 
-			//var xSlider =
-			//	new CustomSlider(
-			//		"X",
-			//		value =>
-			//		{
-			//			view.SelectionX = value;
-			//		});
+			var xSlider =
+				new CustomSlider(
+					"X",
+					value =>
+					{
+						view.SelectionX = value;
+					});
 
-			//var ySlider =
-			//	new CustomSlider(
-			//		"Y",
-			//		value =>
-			//		{
-			//			view.SelectionY = value;
-			//		});
+			var ySlider =
+				new CustomSlider(
+					"Y",
+					value =>
+					{
+						view.SelectionY = value;
+					});
 
-			//var widthSlider =
-			//	new CustomSlider(
-			//		"W",
-			//		value =>
-			//		{
-			//			view.SelectionWidth = value;
-			//		});
+			var widthSlider =
+				new CustomSlider(
+					"W",
+					value =>
+					{
+						view.SelectionWidth = value;
+					});
 
-			//var heightSlider =
-			//	new CustomSlider(
-			//		"H",
-			//		value =>
-			//		{
-			//			view.SelectionHeight = value;
-			//		});
-
-			var button =
-				new Button
-				{
-					Text = "Crop image"
-				};
-
-			button.Clicked += (sender, e) =>
-			{
-				//var croppedImagePath =
-				//	DependencyService.Get<ICropService>().Crop(
-				//		image,
-				//		new CropOption
-				//		{
-				//			X = view.SelectionX,
-				//			Y = view.SelectionY,
-				//			Width = view.SelectionWidth,
-				//			Height = view.SelectionHeight
-				//		});
-
-				//this.Navigation.PushAsync(new PreviewPage(croppedImagePath));
-			};
+			var heightSlider =
+				new CustomSlider(
+					"H",
+					value =>
+					{
+						view.SelectionHeight = value;
+					});
 
 			var sliders =
 				new StackLayout
 				{
 					Spacing = 0,
 					Children = {
-						//xSlider,
-						//ySlider,
-						//widthSlider,
-						//heightSlider,
-						//button
+						xSlider,
+						ySlider,
+						widthSlider,
+						heightSlider
 					}
 				};
 
-			layout.Children.Add(view, new Rectangle(0, 0, 1, .7), AbsoluteLayoutFlags.All);
-			layout.Children.Add(sliders, new Rectangle(0, 1, 1, .3), AbsoluteLayoutFlags.All);
+			layout.Children.Add(view, new Rectangle(0, 0, 1, .8), AbsoluteLayoutFlags.All);
+			layout.Children.Add(sliders, new Rectangle(0, 1, 1, .2), AbsoluteLayoutFlags.All);
 
 			this.Title = "Crop test";
 			this.Content = layout;
+
+			var pick = new ToolbarItem
+			{
+				Text = "Upload picture",
+				Icon = "ic_photo_white_24dp.png"
+			};
+
+			pick.Clicked += async (sender, e) => {
+				imagePath = await DependencyService.Get<IImagePicker>().Pick();
+				view.Source = ImageSource.FromFile(imagePath);
+			};
+
+			var crop = new ToolbarItem
+			{
+				Text = "Crop picture",
+				Icon = "ic_crop_white_24dp.png"
+			};
+
+			crop.Clicked += (sender, e) => {
+				var croppedImagePath =
+					DependencyService.Get<ICropService>().Crop(
+						imagePath,
+						new CropOption
+						{
+							X = view.SelectionX,
+							Y = view.SelectionY,
+							Width = view.SelectionWidth,
+							Height = view.SelectionHeight
+						});
+
+				this.Navigation.PushAsync(new PreviewPage(croppedImagePath));
+			};
+
+			this.ToolbarItems.Add(pick);
+			this.ToolbarItems.Add(crop);
 		}
 	}
 }

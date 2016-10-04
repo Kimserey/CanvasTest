@@ -8,7 +8,7 @@ namespace CanvasTest
 	{
 		public App()
 		{
-			MainPage = new NavigationPage(new ImagePickerPage());
+			MainPage = new NavigationPage(new CropPage());
 		}
 	}
 }

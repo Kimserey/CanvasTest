@@ -35,7 +35,6 @@
     <Compile Include="IImagePicker.cs" />
     <Compile Include="PreviewPage.cs" />
     <Compile Include="CropPage.cs" />
-    <Compile Include="ImagePickerPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">
