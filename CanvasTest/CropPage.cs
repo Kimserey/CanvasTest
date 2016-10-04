@@ -1,28 +1,16 @@
 ﻿using System;
-
+using System.IO;
 using Xamarin.Forms;
 
 namespace CanvasTest
 {
-	public class TestView : Image
+	public class CropView : Image
 	{
-		public static readonly BindableProperty SourcePathProperty =
-			BindableProperty.Create(
-				propertyName: "SourcePath",
-			  	returnType: typeof(string),
-			  	declaringType: typeof(TestView));
-
-		public string SourcePath
-		{
-			get { return (string)GetValue(SourcePathProperty); }
-			set { SetValue(SourcePathProperty, value); }
-		}
-
 		public static readonly BindableProperty SelectionWidthProperty =
 			BindableProperty.Create(
 				propertyName: "SelectionWidth",
 			  	returnType: typeof(double),
-			  	declaringType: typeof(TestView),
+			  	declaringType: typeof(CropView),
 			  	defaultValue: 0.5);
 
 		public double SelectionWidth
@@ -35,7 +23,7 @@ namespace CanvasTest
 			BindableProperty.Create(
 				propertyName: "SelectionHeight",
 			  	returnType: typeof(double),
-			  	declaringType: typeof(TestView),
+			  	declaringType: typeof(CropView),
 			  	defaultValue: 0.5);
 
 		public double SelectionHeight
@@ -48,7 +36,7 @@ namespace CanvasTest
 			BindableProperty.Create(
 				propertyName: "SelectionX",
 			  	returnType: typeof(double),
-			  	declaringType: typeof(TestView),
+			  	declaringType: typeof(CropView),
 			  	defaultValue: 0.5);
 
 		public double SelectionX
@@ -61,7 +49,7 @@ namespace CanvasTest
 			BindableProperty.Create(
 				propertyName: "SelectionY",
 			  	returnType: typeof(double),
-			  	declaringType: typeof(TestView),
+			  	declaringType: typeof(CropView),
 			  	defaultValue: 0.5);
 
 		public double SelectionY
@@ -113,42 +101,47 @@ namespace CanvasTest
 
 	public class CropPage : ContentPage
 	{
-		public CropPage()
+		public CropPage(string image)
 		{
 			var layout = new AbsoluteLayout();
-			var view = new TestView { SourcePath = "camera_test/IMG_20161002_041856316.jpg" };
+			var view =
+				new CropView
+				{
+					Source = ImageSource.FromFile(image),
+					Aspect = Aspect.AspectFit
+				};
 
-			var xSlider =
-				new CustomSlider(
-					"X",
-					value =>
-					{
-						view.SelectionX = value;
-					});
+			//var xSlider =
+			//	new CustomSlider(
+			//		"X",
+			//		value =>
+			//		{
+			//			view.SelectionX = value;
+			//		});
 
-			var ySlider =
-				new CustomSlider(
-					"Y",
-					value =>
-					{
-						view.SelectionY = value;
-					});
+			//var ySlider =
+			//	new CustomSlider(
+			//		"Y",
+			//		value =>
+			//		{
+			//			view.SelectionY = value;
+			//		});
 
-			var widthSlider =
-				new CustomSlider(
-					"W",
-					value =>
-					{
-						view.SelectionWidth = value;
-					});
+			//var widthSlider =
+			//	new CustomSlider(
+			//		"W",
+			//		value =>
+			//		{
+			//			view.SelectionWidth = value;
+			//		});
 
-			var heightSlider =
-				new CustomSlider(
-					"H",
-					value =>
-					{
-						view.SelectionHeight = value;
-					});
+			//var heightSlider =
+			//	new CustomSlider(
+			//		"H",
+			//		value =>
+			//		{
+			//			view.SelectionHeight = value;
+			//		});
 
 			var button =
 				new Button
@@ -158,18 +151,18 @@ namespace CanvasTest
 
 			button.Clicked += (sender, e) =>
 			{
-				var croppedImagePath =
-					DependencyService.Get<ICropService>().Crop(
-						view.SourcePath,
-						new CropOption
-						{
-							X = view.SelectionX,
-							Y = view.SelectionY,
-							Width = view.SelectionWidth,
-							Height = view.SelectionHeight
-						});
+				//var croppedImagePath =
+				//	DependencyService.Get<ICropService>().Crop(
+				//		image,
+				//		new CropOption
+				//		{
+				//			X = view.SelectionX,
+				//			Y = view.SelectionY,
+				//			Width = view.SelectionWidth,
+				//			Height = view.SelectionHeight
+				//		});
 
-				this.Navigation.PushAsync(new PreviewPage(croppedImagePath));
+				//this.Navigation.PushAsync(new PreviewPage(croppedImagePath));
 			};
 
 			var sliders =
@@ -177,11 +170,11 @@ namespace CanvasTest
 				{
 					Spacing = 0,
 					Children = {
-						xSlider,
-						ySlider,
-						widthSlider,
-						heightSlider,
-						button
+						//xSlider,
+						//ySlider,
+						//widthSlider,
+						//heightSlider,
+						//button
 					}
 				};
 
@@ -190,27 +183,6 @@ namespace CanvasTest
 
 			this.Title = "Crop test";
 			this.Content = layout;
-		}
-	}
-
-	public class PreviewPage : ContentPage
-	{
-		public PreviewPage(string imagePath)
-		{
-			this.Title = "Cropped preview";
-			this.Content =
-				new Image
-				{
-					Source = ImageSource.FromFile(imagePath)
-				};
-		}
-	}
-
-	public class App : Application
-	{
-		public App()
-		{
-			MainPage = new NavigationPage(new CropPage());
 		}
 	}
 }

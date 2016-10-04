@@ -13,7 +13,7 @@ using CanvasTest.Droid;
 using Android.OS;
 using Java.IO;
 
-[assembly: ExportRenderer(typeof(TestView), typeof(TestViewRenderer))]
+[assembly: ExportRenderer(typeof(CropView), typeof(CropViewViewRenderer))]
 [assembly: Dependency(typeof(CropService))]
 [assembly: Dependency(typeof(CanvasTest.Path))]
 namespace CanvasTest
@@ -30,8 +30,7 @@ namespace CanvasTest
 	{
 		public string Crop(string imagePath, CropOption options)
 		{
-			var sourcePath = System.IO.Path.Combine(DependencyService.Get<IPath>().GetPublicDirectory(), imagePath);
-			var original = BitmapFactory.DecodeFile(sourcePath);
+			var original = BitmapFactory.DecodeFile(imagePath);
 			var resized = Bitmap.CreateBitmap(original, (int)(options.X * original.Width), (int)(options.Y * original.Height), (int)(options.Width * original.Width), (int)(options.Height * original.Height));
 
 			var destinationPath = System.IO.Path.Combine(DependencyService.Get<IPath>().GetPublicDirectory(), "crop_test.jpg");
@@ -48,17 +47,16 @@ namespace CanvasTest
 	}
 
 	[Preserve(AllMembers = true)]
-	public class TestViewRenderer: ImageRenderer
+	public class CropViewViewRenderer: ImageRenderer
 	{
 		protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
 
-			if (e.PropertyName == TestView.SelectionWidthProperty.PropertyName
-			    || e.PropertyName == TestView.SelectionHeightProperty.PropertyName
-			    || e.PropertyName == TestView.SelectionXProperty.PropertyName
-			    || e.PropertyName == TestView.SelectionYProperty.PropertyName
-			    || e.PropertyName == TestView.SourcePathProperty.PropertyName)
+			if (e.PropertyName == CropView.SelectionWidthProperty.PropertyName
+			    || e.PropertyName == CropView.SelectionHeightProperty.PropertyName
+			    || e.PropertyName == CropView.SelectionXProperty.PropertyName
+			    || e.PropertyName == CropView.SelectionYProperty.PropertyName)
 			{
 				this.Invalidate();
 			}
@@ -66,18 +64,10 @@ namespace CanvasTest
 
 		protected override bool DrawChild(Canvas canvas, Android.Views.View child, long drawingTime)
 		{
-			var sourcePath = ((TestView)this.Element).SourcePath;
-
-			if(string.IsNullOrWhiteSpace(sourcePath))
-				return base.DrawChild(canvas, child, drawingTime);
-
-			sourcePath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).Path, sourcePath);
-			var bitmap = BitmapFactory.DecodeFile(sourcePath);
-
-			var selectionWidth = ((TestView)this.Element).SelectionWidth * bitmap.Width;
-			var selectionHeight = ((TestView)this.Element).SelectionHeight * bitmap.Height;
-			var selectionX = ((TestView)this.Element).SelectionX * bitmap.Width;
-			var selectionY = ((TestView)this.Element).SelectionY * bitmap.Height;
+			var selectionWidth = ((CropView)this.Element).SelectionWidth * this.Width;
+			var selectionHeight = ((CropView)this.Element).SelectionHeight * this.Height;
+			var selectionX = ((CropView)this.Element).SelectionX * this.Width;
+			var selectionY = ((CropView)this.Element).SelectionY * this.Height;
 
 			var path = new Android.Graphics.Path();
 			path.AddRect(
@@ -93,14 +83,15 @@ namespace CanvasTest
 			paint.SetStyle(Paint.Style.Stroke);
 			paint.Color = Android.Graphics.Color.Blue;
 
-			canvas.DrawBitmap(bitmap, null, new Rect(0, 0, bitmap.Width, bitmap.Height), paint);
+			// Draws the Xamarin.Forms image first before adding
+			// the selecttion path on top of it.
+			var result = base.DrawChild(canvas, child, drawingTime);
+
 			canvas.DrawPath(path, paint);
-			
 			path.Dispose();
 			paint.Dispose();
-			bitmap.Dispose();
 
-			return base.DrawChild(canvas, child, drawingTime);
+			return result;
 		}
 	}
 }

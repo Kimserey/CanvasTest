@@ -93,6 +93,8 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestViewRenderer.cs" />
+    <Compile Include="ImagePickerActivity.cs" />
+    <Compile Include="ImagePicker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
