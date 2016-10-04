@@ -61,7 +61,7 @@ namespace CanvasTest.Droid
 						else
 						{
 							var directory = Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryPictures).Path;
-							var tempName = "crop_temp";
+							var tempName = "pick.tmp";
 							string contentPath = System.IO.Path.Combine(directory, tempName);
 
 							try
